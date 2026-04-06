@@ -66,6 +66,16 @@
   border-radius: 10px;
 }
 
+.quiz__title--urgent {
+  color: #e74c3c;
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.12); }
+}
+
 /* Question card */
 
 .quiz__question {

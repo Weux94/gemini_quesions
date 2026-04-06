@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import allQuestions from '../../data/data.js';
 import { saveScore, getTopScores } from '../../supabase.js';
 import './TestBody.css';
+
+const QUESTION_TIME = 20;
 
 const ANIMATION_DURATION = 600;
 const GAME_SIZE = 15;
@@ -29,6 +31,8 @@ export default function TestBody() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [topScores, setTopScores] = useState([]);
   const [showTop, setShowTop] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
+  const timerRef = useRef(null);
 
   const total = questions.length;
 
@@ -38,6 +42,23 @@ export default function TestBody() {
       getTopScores().then(setTopScores);
     });
   }, [isFinished]);
+
+  useEffect(() => {
+    if (phase !== 'playing' || isAnimating) return;
+    setTimeLeft(QUESTION_TIME);
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          handleAnswer(false);
+          return QUESTION_TIME;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current);
+  }, [index, phase, isAnimating]);
 
   function handleStart() {
     if (!name.trim()) return;
@@ -142,7 +163,9 @@ export default function TestBody() {
     <div className="container">
       <div className={`quiz ${isVisible ? 'quiz--visible' : 'quiz--hidden'}`}>
 
-        <h2 className="quiz__title">myQuiz</h2>
+        <h2 className={`quiz__title ${timeLeft <= 5 ? 'quiz__title--urgent' : ''}`}>
+          {timeLeft}
+        </h2>
 
         <p className="quiz__question">{current.question}</p>
 
