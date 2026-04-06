@@ -38,9 +38,9 @@ export default function TestBody() {
 
   useEffect(() => {
     if (!isFinished) return;
-    saveScore(name, correct).then(() => {
-      getTopScores().then(setTopScores);
-    });
+    saveScore(name, correct)
+      .then(() => getTopScores().then(setTopScores))
+      .catch(() => getTopScores().then(setTopScores));
   }, [isFinished]);
 
   useEffect(() => {
@@ -66,6 +66,7 @@ export default function TestBody() {
 
   function handleAnswer(isCorrect) {
     if (isAnimating) return;
+    clearInterval(timerRef.current);
 
     if (isCorrect) setCorrect(prev => prev + 1);
     else setWrong(prev => prev + 1);
