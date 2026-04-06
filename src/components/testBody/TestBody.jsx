@@ -82,7 +82,7 @@ export default function TestBody() {
     <div className="container">
       <div className={`quiz ${isVisible ? 'quiz--visible' : 'quiz--hidden'}`}>
 
-        <h2 className="quiz__title">Simple Questions</h2>
+        <h2 className="quiz__title">myQuiz</h2>
 
         <p className="quiz__question">{current.question}</p>
 
